@@ -1,0 +1,23 @@
+{
+  "name": "selenium",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+ "scripts": {
+  "test": "cucumber-js",
+  "test:chrome": "cucumber-js --profile chrome",
+  "test:firefox": "cucumber-js --profile firefox"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@cucumber/cucumber": "^13.0.0",
+    "dotenv": "^17.4.2",
+    "selenium-webdriver": "^4.44.0"
+  },
+  "devDependencies": {
+    "@types/selenium-webdriver": "^4.35.6"
+  }
+}

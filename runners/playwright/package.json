@@ -1,0 +1,19 @@
+{
+  "name": "playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js --profile default",
+    "test:visual": "cucumber-js --profile visual"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@cucumber/cucumber": "^13.0.0",
+    "@playwright/test": "^1.60.0",
+    "dotenv": "^17.4.2"
+  }
+}

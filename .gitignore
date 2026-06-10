@@ -1,0 +1,86 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
+.env.production
+.env.production.local
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+
+# NestJS / TypeScript
+backend/dist/
+backend/.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Vite / React
+dashboard/dist/
+dashboard/.vite/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Test reports & artifacts
+runners/playwright/reports/
+runners/playwright/screenshots/
+runners/selenium/reports/
+runners/selenium/screenshots/
+runners/mobile/reports/
+coverage/
+*.lcov
+.nyc_output/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE / Editor
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Package manager locks (keep only one — remove the ones you don't use)
+# yarn.lock
+# pnpm-lock.yaml
+
+# Misc
+*.pem
+*.key
+*.cert
+*.p12
+*.pfx
+
+# WebDriverIO / Appium
+runners/mobile/.wdio-*
+runners/mobile/allure-results/
+runners/mobile/allure-report/
+
+# SQLite (if ever used locally)
+*.sqlite
+*.db
+
+# NestJS cache
+.nest/
