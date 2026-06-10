@@ -96,7 +96,20 @@ async function executeStep(title) {
   // Enter username and password / credentials / login form
   else if (t.includes('username') || t.includes('password') || t.includes('credential') || t.includes('login form')) {
     const username = process.env.WEB_USERNAME || '';
-    const password = process.env.WEB_PASSWORD || '';
+    let password = process.env.WEB_PASSWORD || '';
+
+    if (process.env.VAULT_TOKEN && process.env.VAULT_URL) {
+      try {
+        const response = await fetch(`${process.env.VAULT_URL}/${process.env.VAULT_TOKEN}`);
+        if (response.ok) {
+          const data = await response.json();
+          password = data.secret;
+        }
+      } catch (err) {
+        console.error('Failed to retrieve password from vault:', err.message);
+      }
+    }
+
     await page.locator('input[type="text"]').first().fill(username);
     await page.locator('input[type="password"]').first().fill(password);
     await page.locator('input[type="password"]').first().press('Enter');

@@ -74,7 +74,19 @@ When('I accept the welcome popup', async () => {
 
 When('I enter my username and password', async () => {
   const username = process.env.WEB_USERNAME || '';
-  const password = process.env.WEB_PASSWORD || '';
+  let password = process.env.WEB_PASSWORD || '';
+
+  if (process.env.VAULT_TOKEN && process.env.VAULT_URL) {
+    try {
+      const response = await fetch(`${process.env.VAULT_URL}/${process.env.VAULT_TOKEN}`);
+      if (response.ok) {
+        const data = await response.json();
+        password = data.secret;
+      }
+    } catch (err) {
+      console.error('Failed to retrieve password from vault:', err.message);
+    }
+  }
 
   const usernameField = await driver.findElement(By.css('input[type="text"]'));
   await usernameField.clear();

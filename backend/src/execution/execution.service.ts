@@ -4,16 +4,40 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import type { Queue } from 'bull';
 import { Execution, ExecutionStatus, ExecutionPlatform } from './execution.entity';
+import { encrypt } from './crypto.util';
 
 @Injectable()
 export class ExecutionService {
   private readonly logger = new Logger(ExecutionService.name);
+  private vault = new Map<string, string>();
 
   constructor(
     @InjectQueue('execution') private executionQueue: Queue,
     @InjectRepository(Execution)
     private executionRepository: Repository<Execution>,
   ) {}
+
+  storeSecret(secret: string): string {
+    const { randomUUID } = require('crypto');
+    const token = randomUUID();
+    this.vault.set(token, secret);
+
+    // Auto-expire tokens after 5 minutes for security
+    setTimeout(() => {
+      this.vault.delete(token);
+    }, 5 * 60 * 1000);
+
+    return token;
+  }
+
+  retrieveSecret(token: string): string | null {
+    const secret = this.vault.get(token);
+    if (secret) {
+      this.vault.delete(token); // One-time read
+      return secret;
+    }
+    return null;
+  }
 
   async queueMobileTest(username: string, password: string) {
     const execution = this.executionRepository.create({
@@ -24,7 +48,7 @@ export class ExecutionService {
 
     const job = await this.executionQueue.add('mobile', {
       username,
-      password,
+      password: encrypt(password),
       executionId: saved.id,
     });
 
@@ -43,7 +67,7 @@ export class ExecutionService {
 
     const job = await this.executionQueue.add('web', {
       username,
-      password,
+      password: encrypt(password),
       url,
       executionId: saved.id,
     });
@@ -92,6 +116,7 @@ export class ExecutionService {
 
     const job = await this.executionQueue.add('visual-web', {
       ...data,
+      password: encrypt(data.password),
       executionId: saved.id,
     });
 

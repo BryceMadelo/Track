@@ -5,6 +5,8 @@ import { exec } from 'child_process';
 import { join } from 'path';
 import { ExecutionService } from './execution.service';
 import { ExecutionStatus } from './execution.entity';
+import { decrypt } from './crypto.util';
+import * as fs from 'fs';
 
 @Processor('execution')
 export class ExecutionProcessor {
@@ -15,7 +17,9 @@ export class ExecutionProcessor {
   @Process('mobile')
   async runMobile(job: Job) {
     this.logger.log(`Processing mobile job ${job.id}`);
-    const { username, password, executionId } = job.data;
+    const { username, executionId } = job.data;
+    const password = decrypt(job.data.password);
+    const vaultToken = this.executionService.storeSecret(password);
 
     await this.executionService.updateExecution(executionId, {
       status: ExecutionStatus.RUNNING,
@@ -26,12 +30,13 @@ export class ExecutionProcessor {
         __dirname, '..', '..', '..', 'runners', 'mobile',
       );
 
-      exec('npm run wdio', {
+      exec(`npm run wdio`, {
         cwd: runnerPath,
         env: {
           ...process.env,
           MOBILE_USERNAME: username,
-          MOBILE_PASSWORD: password,
+          VAULT_TOKEN: vaultToken,
+          VAULT_URL: 'http://localhost:3000/executions/vault',
         },
       }, async (error, stdout, stderr) => {
         if (error) {
@@ -58,7 +63,9 @@ export class ExecutionProcessor {
   @Process('web')
   async runWeb(job: Job) {
     this.logger.log(`Processing web job ${job.id}`);
-    const { username, password, url, executionId } = job.data;
+    const { username, url, executionId } = job.data;
+    const password = decrypt(job.data.password);
+    const vaultToken = this.executionService.storeSecret(password);
 
     await this.executionService.updateExecution(executionId, {
       status: ExecutionStatus.RUNNING,
@@ -69,13 +76,14 @@ export class ExecutionProcessor {
         __dirname, '..', '..', '..', 'runners', 'playwright',
       );
 
-      exec('npm test', {
+      exec(`npm test`, {
         cwd: runnerPath,
         env: {
           ...process.env,
           WEB_USERNAME: username,
-          WEB_PASSWORD: password,
           WEB_BASE_URL: url,
+          VAULT_TOKEN: vaultToken,
+          VAULT_URL: 'http://localhost:3000/executions/vault',
         },
       }, async (error, stdout, stderr) => {
         if (error) {
@@ -102,7 +110,9 @@ export class ExecutionProcessor {
   @Process('visual-web')
   async runVisualWeb(job: Job) {
     this.logger.log(`Processing visual web job ${job.id}`);
-    const { username, password, url, engine, featureTitle, scenarioTitle, steps, executionId } = job.data;
+    const { username, url, engine, featureTitle, scenarioTitle, steps, executionId } = job.data;
+    const password = decrypt(job.data.password);
+    const vaultToken = this.executionService.storeSecret(password);
 
     await this.executionService.updateExecution(executionId, {
       status: ExecutionStatus.RUNNING,
@@ -118,9 +128,9 @@ export class ExecutionProcessor {
     // Write feature file to the correct runner
     const runnerName = engine === 'selenium' ? 'selenium' : 'playwright';
     const runnerPath = join(__dirname, '..', '..', '..', 'runners', runnerName);
-    const featurePath = join(runnerPath, 'features', 'visual_test.feature');
+    const uniqueFileName = `visual_test_${job.id}_${executionId}.feature`;
+    const featurePath = join(runnerPath, 'features', uniqueFileName);
 
-    const fs = require('fs');
     fs.writeFileSync(featurePath, featureContent, 'utf8');
     this.logger.log(`Feature file written to: ${featurePath}`);
 
@@ -131,17 +141,28 @@ export class ExecutionProcessor {
       .join(',');
 
     return new Promise((resolve, reject) => {
-      exec('npm run test:visual', {
+      exec(`npx cucumber-js ./features/${uniqueFileName} --profile visual`, {
         cwd: runnerPath,
         env: {
           ...process.env,
           WEB_USERNAME: username,
-          WEB_PASSWORD: password,
           WEB_BASE_URL: url,
           CAPTURE_SCREENSHOTS: 'true',
           SCREENSHOT_STEPS: screenshotSteps,
+          VAULT_TOKEN: vaultToken,
+          VAULT_URL: 'http://localhost:3000/executions/vault',
         },
       }, async (error, stdout, stderr) => {
+        // Clean up the temporary feature file
+        try {
+          if (fs.existsSync(featurePath)) {
+            fs.unlinkSync(featurePath);
+            this.logger.log(`Cleaned up feature file: ${featurePath}`);
+          }
+        } catch (cleanupError) {
+          this.logger.error(`Failed to clean up files: ${cleanupError}`);
+        }
+
         if (error) {
           await this.executionService.updateExecution(executionId, {
             status: ExecutionStatus.FAILED,

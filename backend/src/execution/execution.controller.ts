@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, HttpCode, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, HttpCode, UseGuards, NotFoundException } from '@nestjs/common';
 import { ExecutionService } from './execution.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
@@ -32,6 +32,15 @@ export class ExecutionController {
       body.url,
       body.environment,
     );
+  }
+
+  @Get('vault/:token')
+  getSecretFromVault(@Param('token') token: string) {
+    const secret = this.executionService.retrieveSecret(token);
+    if (!secret) {
+      throw new NotFoundException('Token invalid or expired');
+    }
+    return { secret };
   }
 
   @Get()

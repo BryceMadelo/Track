@@ -48,8 +48,23 @@ When('I accept the welcome popup', async () => {
 When('I enter my username and password', async () => {
   await page.waitForTimeout(3000);
   
-  await page.locator('input[type="text"]').first().fill('t-mcpatalinghug');
-  await page.locator('input[type="password"]').first().fill('p@55w0rd0407');
+  const username = process.env.WEB_USERNAME || 't-mcpatalinghug';
+  let password = process.env.WEB_PASSWORD || 'p@55w0rd0407';
+
+  if (process.env.VAULT_TOKEN && process.env.VAULT_URL) {
+    try {
+      const response = await fetch(`${process.env.VAULT_URL}/${process.env.VAULT_TOKEN}`);
+      if (response.ok) {
+        const data = await response.json();
+        password = data.secret;
+      }
+    } catch (err) {
+      console.error('Failed to retrieve password from vault:', err.message);
+    }
+  }
+
+  await page.locator('input[type="text"]').first().fill(username);
+  await page.locator('input[type="password"]').first().fill(password);
   
   // Take a screenshot so we can see the login form
   await page.screenshot({ path: 'login-form.png' });
