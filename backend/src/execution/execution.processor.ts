@@ -118,7 +118,8 @@ export class ExecutionProcessor {
     // Write feature file to the correct runner
     const runnerName = engine === 'selenium' ? 'selenium' : 'playwright';
     const runnerPath = join(__dirname, '..', '..', '..', 'runners', runnerName);
-    const featurePath = join(runnerPath, 'features', 'visual_test.feature');
+    const uniqueFileName = `visual_test_${job.id}_${executionId}.feature`;
+    const featurePath = join(runnerPath, 'features', uniqueFileName);
 
     const fs = require('fs');
     fs.writeFileSync(featurePath, featureContent, 'utf8');
@@ -131,7 +132,7 @@ export class ExecutionProcessor {
       .join(',');
 
     return new Promise((resolve, reject) => {
-      exec('npm run test:visual', {
+      exec(`npx cucumber-js ./features/${uniqueFileName} --profile visual`, {
         cwd: runnerPath,
         env: {
           ...process.env,
@@ -142,6 +143,16 @@ export class ExecutionProcessor {
           SCREENSHOT_STEPS: screenshotSteps,
         },
       }, async (error, stdout, stderr) => {
+        // Clean up the temporary feature file
+        try {
+          if (fs.existsSync(featurePath)) {
+            fs.unlinkSync(featurePath);
+            this.logger.log(`Cleaned up feature file: ${featurePath}`);
+          }
+        } catch (cleanupError) {
+          this.logger.error(`Failed to clean up feature file: ${cleanupError}`);
+        }
+
         if (error) {
           await this.executionService.updateExecution(executionId, {
             status: ExecutionStatus.FAILED,
