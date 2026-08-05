@@ -25,10 +25,6 @@ export default function EnvironmentsPage() {
     apiUrl: '',
   });
 
-  useEffect(() => {
-    loadEnvironments();
-  }, []);
-
   const loadEnvironments = async () => {
     try {
       const data = await getEnvironments();
@@ -40,6 +36,10 @@ export default function EnvironmentsPage() {
     }
   };
 
+
+  useEffect(() => {
+    loadEnvironments();
+  }, []);
   const handleCreate = async () => {
     if (!form.name || !form.webUrl) {
       setError('Name and Web URL are required');

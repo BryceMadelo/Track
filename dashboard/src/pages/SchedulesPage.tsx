@@ -44,10 +44,6 @@ export default function SchedulesPage() {
     password: '',
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = async () => {
     try {
       const [schedulesData, envsData] = await Promise.all([
@@ -63,6 +59,10 @@ export default function SchedulesPage() {
     }
   };
 
+
+  useEffect(() => {
+    loadData();
+  }, []);
   const handleCreate = async () => {
     if (!form.name || !form.username || !form.password) {
       setError('Name, username and password are required');

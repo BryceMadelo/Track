@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Box, Typography, Button, Card, CardContent,
   Chip, Divider, TextField, Select, MenuItem,
-  FormControl, InputLabel, IconButton, Tooltip,
+  FormControl, IconButton, Tooltip,
   Alert, Dialog, DialogTitle, DialogContent,
   DialogActions, ToggleButton, ToggleButtonGroup,
   Switch, FormControlLabel,
@@ -19,7 +19,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { runWebTest, runMobileTest } from '../api/executions';
 import { runVisualWebTest } from '../api/executions';
 import { getEnvironments } from '../api/environments';
 import type { Environment } from '../api/environments';
@@ -63,7 +62,7 @@ export default function VisualTestBuilderPage() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [showRunDialog, setShowRunDialog] = useState(false);
-  const [editingStep, setEditingStep] = useState<TestStep | null>(null);
+
 
   useEffect(() => {
     getEnvironments().then(setEnvironments).catch(() => {});
@@ -85,7 +84,7 @@ export default function VisualTestBuilderPage() {
     setSteps(steps.filter(s => s.id !== id));
   };
 
-  const updateStep = (id: string, field: keyof TestStep, value: any) => {
+  const updateStep = (id: string, field: keyof TestStep, value: string | boolean) => {
     setSteps(steps.map(s => s.id === id ? { ...s, [field]: value } : s));
   };
 
