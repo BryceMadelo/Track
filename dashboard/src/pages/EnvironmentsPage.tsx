@@ -25,10 +25,6 @@ export default function EnvironmentsPage() {
     apiUrl: '',
   });
 
-  useEffect(() => {
-    loadEnvironments();
-  }, []);
-
   const loadEnvironments = async () => {
     try {
       const data = await getEnvironments();
@@ -39,6 +35,11 @@ export default function EnvironmentsPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadEnvironments();
+  }, []);
 
   const handleCreate = async () => {
     if (!form.name || !form.webUrl) {

@@ -22,36 +22,38 @@ export class ExecutionProcessor {
     });
 
     return new Promise((resolve, reject) => {
-      const runnerPath = join(
-        __dirname, '..', '..', '..', 'runners', 'mobile',
-      );
+      const runnerPath = join(__dirname, '..', '..', '..', 'runners', 'mobile');
 
-      exec('npm run wdio', {
-        cwd: runnerPath,
-        env: {
-          ...process.env,
-          MOBILE_USERNAME: username,
-          MOBILE_PASSWORD: password,
+      exec(
+        'npm run wdio',
+        {
+          cwd: runnerPath,
+          env: {
+            ...process.env,
+            MOBILE_USERNAME: username,
+            MOBILE_PASSWORD: password,
+          },
         },
-      }, async (error, stdout, stderr) => {
-        if (error) {
+        async (error, stdout, stderr) => {
+          if (error) {
+            await this.executionService.updateExecution(executionId, {
+              status: ExecutionStatus.FAILED,
+              output: stdout,
+              error: stderr || error.message,
+              finishedAt: new Date(),
+            });
+            reject(stderr || error.message);
+            return;
+          }
           await this.executionService.updateExecution(executionId, {
-            status: ExecutionStatus.FAILED,
+            status: ExecutionStatus.PASSED,
             output: stdout,
-            error: stderr || error.message,
             finishedAt: new Date(),
           });
-          reject(stderr || error.message);
-          return;
-        }
-        await this.executionService.updateExecution(executionId, {
-          status: ExecutionStatus.PASSED,
-          output: stdout,
-          finishedAt: new Date(),
-        });
-        this.logger.log(`Mobile job ${job.id} completed successfully`);
-        resolve(stdout);
-      });
+          this.logger.log(`Mobile job ${job.id} completed successfully`);
+          resolve(stdout);
+        },
+      );
     });
   }
 
@@ -66,43 +68,61 @@ export class ExecutionProcessor {
 
     return new Promise((resolve, reject) => {
       const runnerPath = join(
-        __dirname, '..', '..', '..', 'runners', 'playwright',
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'runners',
+        'playwright',
       );
 
-      exec('npm test', {
-        cwd: runnerPath,
-        env: {
-          ...process.env,
-          WEB_USERNAME: username,
-          WEB_PASSWORD: password,
-          WEB_BASE_URL: url,
+      exec(
+        'npm test',
+        {
+          cwd: runnerPath,
+          env: {
+            ...process.env,
+            WEB_USERNAME: username,
+            WEB_PASSWORD: password,
+            WEB_BASE_URL: url,
+          },
         },
-      }, async (error, stdout, stderr) => {
-        if (error) {
+        async (error, stdout, stderr) => {
+          if (error) {
+            await this.executionService.updateExecution(executionId, {
+              status: ExecutionStatus.FAILED,
+              output: stdout,
+              error: stderr || error.message,
+              finishedAt: new Date(),
+            });
+            reject(stderr || error.message);
+            return;
+          }
           await this.executionService.updateExecution(executionId, {
-            status: ExecutionStatus.FAILED,
+            status: ExecutionStatus.PASSED,
             output: stdout,
-            error: stderr || error.message,
             finishedAt: new Date(),
           });
-          reject(stderr || error.message);
-          return;
-        }
-        await this.executionService.updateExecution(executionId, {
-          status: ExecutionStatus.PASSED,
-          output: stdout,
-          finishedAt: new Date(),
-        });
-        this.logger.log(`Web job ${job.id} completed successfully`);
-        resolve(stdout);
-      });
+          this.logger.log(`Web job ${job.id} completed successfully`);
+          resolve(stdout);
+        },
+      );
     });
   }
 
   @Process('visual-web')
   async runVisualWeb(job: Job) {
     this.logger.log(`Processing visual web job ${job.id}`);
-    const { username, password, url, engine, featureTitle, scenarioTitle, steps, executionId } = job.data;
+    const {
+      username,
+      password,
+      url,
+      engine,
+      featureTitle,
+      scenarioTitle,
+      steps,
+      executionId,
+    } = job.data;
 
     await this.executionService.updateExecution(executionId, {
       status: ExecutionStatus.RUNNING,
@@ -118,10 +138,12 @@ export class ExecutionProcessor {
     // Write feature file to the correct runner
     const runnerName = engine === 'selenium' ? 'selenium' : 'playwright';
     const runnerPath = join(__dirname, '..', '..', '..', 'runners', runnerName);
-    const uniqueFileName = `visual_test_${job.id}_${executionId}.feature`;
-    const featurePath = join(runnerPath, 'features', uniqueFileName);
 
     const fs = require('fs');
+    const os = require('os');
+    const tmpDir = fs.mkdtempSync(join(os.tmpdir(), `qat-visual-${job.id}-`));
+    const featurePath = join(tmpDir, 'visual_test.feature');
+
     fs.writeFileSync(featurePath, featureContent, 'utf8');
     this.logger.log(`Feature file written to: ${featurePath}`);
 
@@ -132,45 +154,54 @@ export class ExecutionProcessor {
       .join(',');
 
     return new Promise((resolve, reject) => {
-      exec(`npx cucumber-js ./features/${uniqueFileName} --profile visual`, {
-        cwd: runnerPath,
-        env: {
-          ...process.env,
-          WEB_USERNAME: username,
-          WEB_PASSWORD: password,
-          WEB_BASE_URL: url,
-          CAPTURE_SCREENSHOTS: 'true',
-          SCREENSHOT_STEPS: screenshotSteps,
+      exec(
+        `npx cucumber-js "${featurePath}" --profile visual`,
+        {
+          cwd: runnerPath,
+          env: {
+            ...process.env,
+            WEB_USERNAME: username,
+            WEB_PASSWORD: password,
+            WEB_BASE_URL: url,
+            CAPTURE_SCREENSHOTS: 'true',
+            SCREENSHOT_STEPS: screenshotSteps,
+          },
         },
-      }, async (error, stdout, stderr) => {
-        // Clean up the temporary feature file
-        try {
-          if (fs.existsSync(featurePath)) {
-            fs.unlinkSync(featurePath);
-            this.logger.log(`Cleaned up feature file: ${featurePath}`);
+        async (error, stdout, stderr) => {
+          // Clean up the temporary feature file and directory
+          try {
+            if (fs.existsSync(featurePath)) {
+              fs.unlinkSync(featurePath);
+            }
+            if (fs.existsSync(tmpDir)) {
+              fs.rmdirSync(tmpDir);
+            }
+            this.logger.log(`Cleaned up temp directory: ${tmpDir}`);
+          } catch (cleanupError) {
+            this.logger.error(
+              `Failed to clean up temp directory: ${cleanupError}`,
+            );
           }
-        } catch (cleanupError) {
-          this.logger.error(`Failed to clean up feature file: ${cleanupError}`);
-        }
 
-        if (error) {
+          if (error) {
+            await this.executionService.updateExecution(executionId, {
+              status: ExecutionStatus.FAILED,
+              output: stdout,
+              error: stderr || error.message,
+              finishedAt: new Date(),
+            });
+            reject(stderr || error.message);
+            return;
+          }
           await this.executionService.updateExecution(executionId, {
-            status: ExecutionStatus.FAILED,
+            status: ExecutionStatus.PASSED,
             output: stdout,
-            error: stderr || error.message,
             finishedAt: new Date(),
           });
-          reject(stderr || error.message);
-          return;
-        }
-        await this.executionService.updateExecution(executionId, {
-          status: ExecutionStatus.PASSED,
-          output: stdout,
-          finishedAt: new Date(),
-        });
-        this.logger.log(`Visual web job ${job.id} completed successfully`);
-        resolve(stdout);
-      });
+          this.logger.log(`Visual web job ${job.id} completed successfully`);
+          resolve(stdout);
+        },
+      );
     });
   }
 }

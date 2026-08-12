@@ -1,6 +1,12 @@
 import {
-  Controller, Get, Post, Put, Delete,
-  Body, Param, UseGuards,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
 } from '@nestjs/common';
 import { EnvironmentsService } from './environments.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -21,12 +27,15 @@ export class EnvironmentsController {
   }
 
   @Post()
-  create(@Body() body: {
-    name: string;
-    description?: string;
-    webUrl: string;
-    apiUrl?: string;
-  }) {
+  create(
+    @Body()
+    body: {
+      name: string;
+      description?: string;
+      webUrl: string;
+      apiUrl?: string;
+    },
+  ) {
     return this.environmentsService.create(body);
   }
 

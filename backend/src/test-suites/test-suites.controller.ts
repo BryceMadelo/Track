@@ -1,6 +1,12 @@
 import {
-  Controller, Get, Post, Put, Delete,
-  Body, Param, UseGuards,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
 } from '@nestjs/common';
 import { TestSuitesService } from './test-suites.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -22,12 +28,15 @@ export class TestSuitesController {
   }
 
   @Post()
-  create(@Body() body: {
-    name: string;
-    description?: string;
-    type?: SuiteType;
-    testCaseIds?: number[];
-  }) {
+  create(
+    @Body()
+    body: {
+      name: string;
+      description?: string;
+      type?: SuiteType;
+      testCaseIds?: number[];
+    },
+  ) {
     return this.testSuitesService.create(body);
   }
 

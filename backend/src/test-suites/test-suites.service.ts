@@ -43,7 +43,7 @@ export class TestSuitesService {
 
     if (data.testCaseIds?.length) {
       suite.testCases = await this.testCasesRepository.findBy(
-        data.testCaseIds.map(id => ({ id }))
+        data.testCaseIds.map((id) => ({ id })),
       );
     }
 
@@ -54,7 +54,7 @@ export class TestSuitesService {
     const suite = await this.findOne(id);
     if (data.testCaseIds) {
       suite.testCases = await this.testCasesRepository.findBy(
-        data.testCaseIds.map(id => ({ id }))
+        data.testCaseIds.map((id) => ({ id })),
       );
     }
     Object.assign(suite, data);

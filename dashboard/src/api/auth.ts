@@ -48,3 +48,8 @@ export const logout = () => {
 export const isAuthenticated = () => {
   return !!getToken();
 };
+
+export const getAuthHeader = () => {
+  const token = getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};

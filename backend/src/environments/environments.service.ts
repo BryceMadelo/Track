@@ -43,9 +43,21 @@ export class EnvironmentsService {
     const count = await this.environmentsRepository.count();
     if (count === 0) {
       const defaults = [
-        { name: 'Staging', description: 'QA testing environment', webUrl: 'https://ppgisportalsqa02/PPGISWEB_HYBRID_OSS/' },
-        { name: 'Prebau', description: 'User acceptance testing', webUrl: 'https://ppgisportalsuat/PPGISWEB_HYBRID_OSS/' },
-        { name: 'Production', description: 'Live production environment', webUrl: 'https://ppgisportals/PPGISWEB_HYBRID_OSS/' },
+        {
+          name: 'Staging',
+          description: 'QA testing environment',
+          webUrl: 'https://ppgisportalsqa02/PPGISWEB_HYBRID_OSS/',
+        },
+        {
+          name: 'Prebau',
+          description: 'User acceptance testing',
+          webUrl: 'https://ppgisportalsuat/PPGISWEB_HYBRID_OSS/',
+        },
+        {
+          name: 'Production',
+          description: 'Live production environment',
+          webUrl: 'https://ppgisportals/PPGISWEB_HYBRID_OSS/',
+        },
       ];
       for (const env of defaults) {
         await this.create(env);

@@ -20,11 +20,13 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import BuildIcon from '@mui/icons-material/Build';
+import FolderSpecialIcon from '@mui/icons-material/FolderSpecial';
 
 const navItems = [
   { label: 'Dashboard', icon: <DashboardIcon />, path: '/', section: null },
   { label: 'TEST MANAGEMENT', icon: null, path: null, section: 'header' },
   { label: 'Visual Builder', icon: <BuildIcon />, path: '/visual-builder', section: null },
+  { label: 'Object Repository', icon: <FolderSpecialIcon />, path: '/objects', section: null },
   { label: 'Test Converter', icon: <AutoFixHighIcon />, path: '/test-converter', section: null },
   { label: 'Test Cases', icon: <AssignmentIcon />, path: '/test-cases', section: null },
   { label: 'Test Suites', icon: <FolderIcon />, path: '/test-suites', section: null },

@@ -7,7 +7,7 @@ describe('EnvironmentsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [EnvironmentsController],
-    }).compile();
+    }).useMocker(() => ({})).compile();
 
     controller = module.get<EnvironmentsController>(EnvironmentsController);
   });

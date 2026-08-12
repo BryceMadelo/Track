@@ -44,10 +44,6 @@ export default function SchedulesPage() {
     password: '',
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = async () => {
     try {
       const [schedulesData, envsData] = await Promise.all([
@@ -62,6 +58,11 @@ export default function SchedulesPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadData();
+  }, []);
 
   const handleCreate = async () => {
     if (!form.name || !form.username || !form.password) {

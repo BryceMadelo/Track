@@ -1,6 +1,9 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, ManyToOne,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { TestSuite } from '../test-suites/test-suite.entity';
 import { User } from '../users/user.entity';
@@ -23,7 +26,11 @@ export class Execution {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'enum', enum: ExecutionStatus, default: ExecutionStatus.QUEUED })
+  @Column({
+    type: 'enum',
+    enum: ExecutionStatus,
+    default: ExecutionStatus.QUEUED,
+  })
   status!: ExecutionStatus;
 
   @Column({ type: 'enum', enum: ExecutionPlatform })

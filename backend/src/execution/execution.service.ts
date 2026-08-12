@@ -3,7 +3,11 @@ import { InjectQueue } from '@nestjs/bull';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import type { Queue } from 'bull';
-import { Execution, ExecutionStatus, ExecutionPlatform } from './execution.entity';
+import {
+  Execution,
+  ExecutionStatus,
+  ExecutionPlatform,
+} from './execution.entity';
 
 @Injectable()
 export class ExecutionService {
@@ -33,7 +37,12 @@ export class ExecutionService {
     return { jobId: job.id, executionId: saved.id, status: 'queued' };
   }
 
-  async queueWebTest(username: string, password: string, url: string, environment?: string) {
+  async queueWebTest(
+    username: string,
+    password: string,
+    url: string,
+    environment?: string,
+  ) {
     const execution = this.executionRepository.create({
       platform: ExecutionPlatform.WEB,
       status: ExecutionStatus.QUEUED,

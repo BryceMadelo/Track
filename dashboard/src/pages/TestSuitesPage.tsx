@@ -35,10 +35,6 @@ export default function TestSuitesPage() {
     type: 'regression',
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = async () => {
     try {
       const [suitesData, casesData] = await Promise.all([
@@ -54,13 +50,18 @@ export default function TestSuitesPage() {
     }
   };
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadData();
+  }, []);
+
   const handleCreate = async () => {
     if (!form.name) {
       setError('Name is required');
       return;
     }
     try {
-      await createTestSuite({ ...form as any, testCaseIds: selectedCaseIds });
+      await createTestSuite({ ...form, testCaseIds: selectedCaseIds } as Omit<TestSuite, 'id' | 'createdAt' | 'updatedAt'>);
       setSuccess('Test suite created successfully');
       setOpenDialog(false);
       setForm({ name: '', description: '', type: 'regression' });

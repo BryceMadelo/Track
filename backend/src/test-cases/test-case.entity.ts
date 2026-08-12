@@ -1,6 +1,10 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn, ManyToMany,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToMany,
 } from 'typeorm';
 
 export enum Platform {
@@ -38,7 +42,11 @@ export class TestCase {
   @Column({ type: 'enum', enum: Priority, default: Priority.MEDIUM })
   priority!: Priority;
 
-  @Column({ type: 'enum', enum: AutomationStatus, default: AutomationStatus.MANUAL })
+  @Column({
+    type: 'enum',
+    enum: AutomationStatus,
+    default: AutomationStatus.MANUAL,
+  })
   automationStatus!: AutomationStatus;
 
   @Column({ nullable: true })

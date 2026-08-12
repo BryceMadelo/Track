@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
-  Box, Typography, Button, Card, CardContent,
+  Box, Typography, Button, Card,
   Table, TableBody, TableCell, TableContainer,
   TableHead, TableRow, Chip, Dialog, DialogTitle,
   DialogContent, DialogActions, TextField, Select,
@@ -49,10 +49,6 @@ export default function TestCasesPage() {
     expectedResult: '',
   });
 
-  useEffect(() => {
-    loadTestCases();
-  }, []);
-
   const loadTestCases = async () => {
     try {
       const data = await getTestCases();
@@ -64,13 +60,18 @@ export default function TestCasesPage() {
     }
   };
 
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadTestCases();
+  }, []);
+
   const handleCreate = async () => {
     if (!form.title) {
       setError('Title is required');
       return;
     }
     try {
-      await createTestCase(form as any);
+      await createTestCase(form as Omit<TestCase, 'id' | 'createdAt' | 'updatedAt'>);
       setSuccess('Test case created successfully');
       setOpenDialog(false);
       setForm({ title: '', description: '', platform: 'web', priority: 'medium', automationStatus: 'manual', tags: '', expectedResult: '' });

@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: qatrack_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: p@55w0rd
+      POSTGRES_DB: qatrack
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: qatrack_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+volumes:
+  pgdata:

@@ -10,6 +10,7 @@ import { TestSuitesModule } from './test-suites/test-suites.module';
 import { EnvironmentsModule } from './environments/environments.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { BugsModule } from './bugs/bugs.module';
+import { ObjectModule } from './objects/object.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { BugsModule } from './bugs/bugs.module';
     EnvironmentsModule,
     SchedulesModule,
     BugsModule,
+    ObjectModule,
   ],
 })
 export class AppModule {}

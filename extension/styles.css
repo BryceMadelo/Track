@@ -1,0 +1,21 @@
+/* QATrack Object Spy Overlay */
+.qatrack-spy-overlay {
+  position: absolute !important;
+  pointer-events: none !important;
+  z-index: 2147483647 !important;
+  border: 2px solid #f43f5e !important;
+  background-color: rgba(244, 63, 94, 0.2) !important;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.5) !important;
+  border-radius: 2px !important;
+  transition: all 0.1s ease-out !important;
+}
+
+/* QATrack Record Mode Flash */
+.qatrack-flash {
+  animation: qatrack-flash-anim 0.4s ease-out;
+}
+
+@keyframes qatrack-flash-anim {
+  0% { box-shadow: 0 0 0 2px #2dd4bf; }
+  100% { box-shadow: 0 0 0 10px transparent; }
+}

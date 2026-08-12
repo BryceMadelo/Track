@@ -1,7 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TestCase, Platform, Priority, AutomationStatus } from './test-case.entity';
+import {
+  TestCase,
+  Platform,
+  Priority,
+  AutomationStatus,
+} from './test-case.entity';
 
 @Injectable()
 export class TestCasesService {

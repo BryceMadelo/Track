@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "QATrack Recorder",
+  "version": "1.0",
+  "description": "Object Spy and Smart Recorder for QATrack Platform.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "css": ["styles.css"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "QATrack Recorder"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

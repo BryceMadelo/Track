@@ -15,6 +15,7 @@ import TestConverterPage from './pages/TestConverterPage';
 import SchedulesPage from './pages/SchedulesPage';
 import BugTrackerPage from './pages/BugTrackerPage';
 import VisualTestBuilderPage from './pages/VisualTestBuilderPage';
+import ObjectRepositoryPage from './pages/ObjectRepositoryPage';
 
 function AppLayout() {
   return (
@@ -50,6 +51,7 @@ function AppLayout() {
           <Route path="/schedules" element={<SchedulesPage />} />
           <Route path="/bugs" element={<BugTrackerPage />} />
           <Route path="/visual-builder" element={<VisualTestBuilderPage />} />
+          <Route path="/objects" element={<ObjectRepositoryPage />} />
         </Routes>
       </Box>
     </Box>

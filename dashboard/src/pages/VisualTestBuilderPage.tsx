@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   Box, Typography, Button, Card, CardContent,
   Chip, Divider, TextField, Select, MenuItem,
-  FormControl, InputLabel, IconButton, Tooltip,
+  FormControl, IconButton, Tooltip,
   Alert, Dialog, DialogTitle, DialogContent,
   DialogActions, ToggleButton, ToggleButtonGroup,
   Switch, FormControlLabel,
@@ -19,7 +19,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { runWebTest, runMobileTest } from '../api/executions';
 import { runVisualWebTest } from '../api/executions';
 import { getEnvironments } from '../api/environments';
 import type { Environment } from '../api/environments';
@@ -63,7 +62,6 @@ export default function VisualTestBuilderPage() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [showRunDialog, setShowRunDialog] = useState(false);
-  const [editingStep, setEditingStep] = useState<TestStep | null>(null);
 
   useEffect(() => {
     getEnvironments().then(setEnvironments).catch(() => {});
@@ -85,7 +83,7 @@ export default function VisualTestBuilderPage() {
     setSteps(steps.filter(s => s.id !== id));
   };
 
-  const updateStep = (id: string, field: keyof TestStep, value: any) => {
+  const updateStep = (id: string, field: keyof TestStep, value: string | boolean) => {
     setSteps(steps.map(s => s.id === id ? { ...s, [field]: value } : s));
   };
 
@@ -190,7 +188,6 @@ ${stepsText}
 
   return (
     <Box>
-      {/* Header */}
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Box sx={{
@@ -233,9 +230,7 @@ ${stepsText}
       {success && <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>{success}</Alert>}
 
       <Box sx={{ display: "flex", gap: 3, flexWrap: "wrap" }}>
-        {/* Left — Step Builder */}
         <Box sx={{ flex: 1, minWidth: 400 }}>
-          {/* Test Info */}
           <Card sx={{ mb: 2 }}>
             <CardContent sx={{ p: 2 }}>
               <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
@@ -278,7 +273,6 @@ ${stepsText}
             </CardContent>
           </Card>
 
-          {/* Steps Header */}
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1, px: 1 }}>
             <Typography sx={{ fontSize: 12, fontWeight: 700, color: "text.secondary", letterSpacing: "0.08em" }}>
               SCENARIO STEPS
@@ -288,7 +282,6 @@ ${stepsText}
             </Typography>
           </Box>
 
-          {/* Draggable Steps */}
           <DragDropContext onDragEnd={handleDragEnd}>
             <Droppable droppableId="steps">
               {(provided) => (
@@ -307,14 +300,11 @@ ${stepsText}
                           }}
                         >
                           <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                            {/* Step Header */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
-                              {/* Drag Handle */}
                               <Box {...provided.dragHandleProps} sx={{ cursor: 'grab', color: '#9CA3AF', display: 'flex' }}>
                                 <DragIndicatorIcon fontSize="small" />
                               </Box>
 
-                              {/* Keyword Badge */}
                               <Chip
                                 label={step.keyword}
                                 size="small"
@@ -327,7 +317,6 @@ ${stepsText}
                                 }}
                               />
 
-                              {/* Step Title */}
                               <TextField
                                 value={step.title}
                                 onChange={(e) => updateStep(step.id, 'title', e.target.value)}
@@ -343,7 +332,6 @@ ${stepsText}
                                 placeholder="Step title..."
                               />
 
-                              {/* Screenshot Toggle */}
                               <Tooltip title={step.captureScreenshot ? 'Screenshot ON' : 'Screenshot OFF'}>
                                 <IconButton
                                   size="small"
@@ -357,7 +345,6 @@ ${stepsText}
                                 </IconButton>
                               </Tooltip>
 
-                              {/* Move Up/Down */}
                               <Tooltip title="Move up">
                                 <IconButton size="small" onClick={() => moveStep(index, 'up')} disabled={index === 0}>
                                   <ArrowUpwardIcon sx={{ fontSize: 16 }} />
@@ -369,7 +356,6 @@ ${stepsText}
                                 </IconButton>
                               </Tooltip>
 
-                              {/* Delete */}
                               <Tooltip title="Remove step">
                                 <IconButton size="small" color="error" onClick={() => removeStep(step.id)}>
                                   <DeleteIcon sx={{ fontSize: 16 }} />
@@ -377,7 +363,6 @@ ${stepsText}
                               </Tooltip>
                             </Box>
 
-                            {/* Keyword Selector + Description */}
                             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                               <FormControl size="small" sx={{ minWidth: 90 }}>
                                 <Select
@@ -409,7 +394,6 @@ ${stepsText}
                               />
                             </Box>
 
-                            {/* Screenshot indicator */}
                             {step.captureScreenshot && (
                               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
                                 <CameraAltIcon sx={{ fontSize: 12, color: '#1565C0' }} />
@@ -429,7 +413,6 @@ ${stepsText}
             </Droppable>
           </DragDropContext>
 
-          {/* Add Step Button */}
           <Button
             startIcon={<AddIcon />}
             onClick={addStep}
@@ -441,7 +424,6 @@ ${stepsText}
           </Button>
         </Box>
 
-        {/* Right — Generated Output */}
         <Box sx={{ flex: 1, minWidth: 340 }}>
           <Card>
             <CardContent sx={{ p: 3 }}>

@@ -2,7 +2,11 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Cron } from '@nestjs/schedule';
-import { Schedule, ScheduleFrequency, SchedulePlatform } from './schedule.entity';
+import {
+  Schedule,
+  ScheduleFrequency,
+  SchedulePlatform,
+} from './schedule.entity';
 import { ExecutionService } from '../execution/execution.service';
 
 @Injectable()
@@ -58,10 +62,14 @@ export class SchedulesService {
 
   private getCronExpression(frequency: ScheduleFrequency): string {
     switch (frequency) {
-      case ScheduleFrequency.HOURLY: return '0 * * * *';
-      case ScheduleFrequency.DAILY: return '0 8 * * *';
-      case ScheduleFrequency.WEEKLY: return '0 8 * * 1';
-      default: return '0 8 * * *';
+      case ScheduleFrequency.HOURLY:
+        return '0 * * * *';
+      case ScheduleFrequency.DAILY:
+        return '0 8 * * *';
+      case ScheduleFrequency.WEEKLY:
+        return '0 8 * * 1';
+      default:
+        return '0 8 * * *';
     }
   }
 
@@ -89,7 +97,9 @@ export class SchedulesService {
   @Cron('0 * * * *')
   async runDueSchedules() {
     this.logger.log('Checking for due schedules...');
-    const schedules = await this.schedulesRepository.find({ where: { isActive: true } });
+    const schedules = await this.schedulesRepository.find({
+      where: { isActive: true },
+    });
     const now = new Date();
 
     for (const schedule of schedules) {
@@ -115,7 +125,9 @@ export class SchedulesService {
             nextRunAt: this.getNextRunDate(schedule.frequency),
           });
         } catch (error) {
-          this.logger.error(`Failed to run schedule ${schedule.name}: ${error}`);
+          this.logger.error(
+            `Failed to run schedule ${schedule.name}: ${error}`,
+          );
         }
       }
     }

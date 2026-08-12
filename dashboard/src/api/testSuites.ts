@@ -14,7 +14,7 @@ export interface TestSuite {
   name: string;
   description: string;
   type: 'smoke' | 'regression' | 'sanity' | 'release';
-  testCases: any[];
+  testCases: unknown[];
   createdAt: string;
 }
 

@@ -80,7 +80,11 @@ export class BugsService {
     return this.bugsRepository.save(bug);
   }
 
-  async updateStatus(id: number, status: BugStatus, resolution?: string): Promise<Bug> {
+  async updateStatus(
+    id: number,
+    status: BugStatus,
+    resolution?: string,
+  ): Promise<Bug> {
     const update: Partial<Bug> = { status };
     if (status === BugStatus.FIXED || status === BugStatus.CLOSED) {
       update.resolvedAt = new Date();
@@ -113,10 +117,18 @@ export class BugsService {
 
   async getStats() {
     const total = await this.bugsRepository.count();
-    const open = await this.bugsRepository.count({ where: { status: BugStatus.OPEN } });
-    const inProgress = await this.bugsRepository.count({ where: { status: BugStatus.IN_PROGRESS } });
-    const fixed = await this.bugsRepository.count({ where: { status: BugStatus.FIXED } });
-    const critical = await this.bugsRepository.count({ where: { severity: BugSeverity.CRITICAL } });
+    const open = await this.bugsRepository.count({
+      where: { status: BugStatus.OPEN },
+    });
+    const inProgress = await this.bugsRepository.count({
+      where: { status: BugStatus.IN_PROGRESS },
+    });
+    const fixed = await this.bugsRepository.count({
+      where: { status: BugStatus.FIXED },
+    });
+    const critical = await this.bugsRepository.count({
+      where: { severity: BugSeverity.CRITICAL },
+    });
     return { total, open, inProgress, fixed, critical };
   }
 }

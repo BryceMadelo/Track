@@ -1,6 +1,14 @@
 import {
-  Controller, Get, Post, Put, Delete, Patch,
-  Body, Param, Query, UseGuards,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Patch,
+  Body,
+  Param,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BugsService } from './bugs.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -28,19 +36,22 @@ export class BugsController {
   }
 
   @Post()
-  create(@Body() body: {
-    title: string;
-    description?: string;
-    stepsToReproduce?: string;
-    expectedBehavior?: string;
-    actualBehavior?: string;
-    severity?: BugSeverity;
-    priority?: BugPriority;
-    environment?: string;
-    version?: string;
-    assignedToId?: number;
-    reportedById?: number;
-  }) {
+  create(
+    @Body()
+    body: {
+      title: string;
+      description?: string;
+      stepsToReproduce?: string;
+      expectedBehavior?: string;
+      actualBehavior?: string;
+      severity?: BugSeverity;
+      priority?: BugPriority;
+      environment?: string;
+      version?: string;
+      assignedToId?: number;
+      reportedById?: number;
+    },
+  ) {
     return this.bugsService.create(body);
   }
 

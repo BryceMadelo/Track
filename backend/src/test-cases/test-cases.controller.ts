@@ -1,6 +1,12 @@
 import {
-  Controller, Get, Post, Put, Delete,
-  Body, Param, UseGuards,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
 } from '@nestjs/common';
 import { TestCasesService } from './test-cases.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -22,16 +28,19 @@ export class TestCasesController {
   }
 
   @Post()
-  create(@Body() body: {
-    title: string;
-    description?: string;
-    platform: Platform;
-    priority?: Priority;
-    automationStatus?: AutomationStatus;
-    tags?: string;
-    steps?: { order: number; action: string; expected: string }[];
-    expectedResult?: string;
-  }) {
+  create(
+    @Body()
+    body: {
+      title: string;
+      description?: string;
+      platform: Platform;
+      priority?: Priority;
+      automationStatus?: AutomationStatus;
+      tags?: string;
+      steps?: { order: number; action: string; expected: string }[];
+      expectedResult?: string;
+    },
+  ) {
     return this.testCasesService.create(body);
   }
 

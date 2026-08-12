@@ -1,6 +1,9 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
-  CreateDateColumn, UpdateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 export enum ScheduleFrequency {
@@ -26,7 +29,11 @@ export class Schedule {
   @Column({ type: 'enum', enum: SchedulePlatform })
   platform!: SchedulePlatform;
 
-  @Column({ type: 'enum', enum: ScheduleFrequency, default: ScheduleFrequency.DAILY })
+  @Column({
+    type: 'enum',
+    enum: ScheduleFrequency,
+    default: ScheduleFrequency.DAILY,
+  })
   frequency!: ScheduleFrequency;
 
   @Column({ nullable: true })

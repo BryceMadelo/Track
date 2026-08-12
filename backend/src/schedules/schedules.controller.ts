@@ -1,6 +1,12 @@
 import {
-  Controller, Get, Post, Delete, Patch,
-  Body, Param, UseGuards,
+  Controller,
+  Get,
+  Post,
+  Delete,
+  Patch,
+  Body,
+  Param,
+  UseGuards,
 } from '@nestjs/common';
 import { SchedulesService } from './schedules.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -17,15 +23,18 @@ export class SchedulesController {
   }
 
   @Post()
-  create(@Body() body: {
-    name: string;
-    platform: SchedulePlatform;
-    frequency: ScheduleFrequency;
-    environment?: string;
-    url?: string;
-    username: string;
-    password: string;
-  }) {
+  create(
+    @Body()
+    body: {
+      name: string;
+      platform: SchedulePlatform;
+      frequency: ScheduleFrequency;
+      environment?: string;
+      url?: string;
+      username: string;
+      password: string;
+    },
+  ) {
     return this.schedulesService.create(body);
   }
 
