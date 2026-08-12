@@ -63,7 +63,7 @@ export const updateBugStatus = async (
   return data;
 };
 
-export const updateBug = async (id: number, bug: any): Promise<Bug> => {
+export const updateBug = async (id: number, bug: Partial<Bug>): Promise<Bug> => {
   const { data } = await api.put(`/bugs/${id}`, bug);
   return data;
 };

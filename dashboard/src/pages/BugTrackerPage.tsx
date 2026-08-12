@@ -7,7 +7,6 @@ import {
   IconButton, Tooltip, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow,
   ToggleButton, ToggleButtonGroup, Avatar,
-  Badge,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -66,10 +65,6 @@ export default function BugTrackerPage() {
     version: '',
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = async () => {
     try {
       const [bugsData, statsData] = await Promise.all([
@@ -85,11 +80,15 @@ export default function BugTrackerPage() {
     }
   };
 
+
+  useEffect(() => {
+    loadData();
+  }, []);
   const handleCreate = async () => {
     if (!form.title) { setError('Title is required'); return; }
     try {
       await createBug({
-        ...form as any,
+        ...form,
         reportedById: currentUser?.id,
       });
       setSuccess('Bug reported successfully');

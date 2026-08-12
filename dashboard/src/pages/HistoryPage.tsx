@@ -4,7 +4,7 @@ import {
   TableHead, TableRow, TableCell, TableBody,
   Chip, Divider, Alert, IconButton, Tooltip,
   Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, Typography as MuiTypography,
+  Button, Typography,
 } from '@mui/material';
 import HistoryIcon from '@mui/icons-material/History';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -31,10 +31,6 @@ export default function HistoryPage() {
   const [error, setError] = useState('');
   const [selected, setSelected] = useState<Execution | null>(null);
 
-  useEffect(() => {
-    loadExecutions();
-  }, []);
-
   const loadExecutions = async () => {
     setLoading(true);
     try {
@@ -47,6 +43,10 @@ export default function HistoryPage() {
     }
   };
 
+
+  useEffect(() => {
+    loadExecutions();
+  }, []);
   const formatDuration = (start: string, end: string) => {
     if (!end) return '—';
     const ms = new Date(end).getTime() - new Date(start).getTime();
