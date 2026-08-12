@@ -47,7 +47,6 @@ export default function HistoryPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadExecutions();
   }, []);
-
   const formatDuration = (start: string, end: string) => {
     if (!end) return '—';
     const ms = new Date(end).getTime() - new Date(start).getTime();

@@ -58,12 +58,9 @@ export default function SchedulesPage() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, []);
-
   const handleCreate = async () => {
     if (!form.name || !form.username || !form.password) {
       setError('Name, username and password are required');

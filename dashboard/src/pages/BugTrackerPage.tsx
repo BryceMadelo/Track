@@ -84,7 +84,6 @@ export default function BugTrackerPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, []);
-
   const handleCreate = async () => {
     if (!form.title) { setError('Title is required'); return; }
     try {

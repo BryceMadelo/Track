@@ -64,7 +64,6 @@ export default function TestCasesPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadTestCases();
   }, []);
-
   const handleCreate = async () => {
     if (!form.title) {
       setError('Title is required');

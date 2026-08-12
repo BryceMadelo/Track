@@ -54,14 +54,17 @@ export default function TestSuitesPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadData();
   }, []);
-
   const handleCreate = async () => {
     if (!form.name) {
       setError('Name is required');
       return;
     }
     try {
-      await createTestSuite({ ...form, testCaseIds: selectedCaseIds } as Omit<TestSuite, 'id' | 'createdAt' | 'updatedAt'>);
+      await createTestSuite({
+        ...form,
+        type: form.type as TestSuite['type'],
+        testCaseIds: selectedCaseIds,
+      });
       setSuccess('Test suite created successfully');
       setOpenDialog(false);
       setForm({ name: '', description: '', type: 'regression' });

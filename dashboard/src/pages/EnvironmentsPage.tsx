@@ -40,7 +40,6 @@ export default function EnvironmentsPage() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     loadEnvironments();
   }, []);
-
   const handleCreate = async () => {
     if (!form.name || !form.webUrl) {
       setError('Name and Web URL are required');
